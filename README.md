@@ -133,7 +133,7 @@ program so that it works for any size, outputting a grid of the given width and 
 
 ## Solution
 
-```
+```js
 const size = 8;
 let board = "";
 
@@ -160,11 +160,11 @@ two arguments and returns their minimum.
 
 ## Solution
 
-```
+```js
 const min = (x, y) => x < y ? x : y;
 ```
 
-# chapter 3 Exercises
+# chapter 4 Exercises
 
 ## Recursion
 
@@ -180,7 +180,7 @@ Test it on 50 and 75. See how it behaves on –1. Why? Can you think of a way to
 
 ## Solution
 
-```
+```js
 const is_even = (x) => {
 	if (x == 0) {
 		return true;
@@ -246,7 +246,7 @@ range(5, 2, -1) produces [5, 4, 3, 2].
 
 ## Solution
 
-```
+```js
 const my_range = (start, end, step = 1) => {
 	result = []
 	if (step === 0) {
@@ -288,5 +288,20 @@ Thinking back to the notes about side effects and pure functions in the
 previous chapter, which variant do you expect to be useful in more situations?
 Which one runs faster?
 
-```
+```js
+const reverseArrayInPlace = (array) => {
+	for (let i = 0; i < Math.floor(array.length) / 2; i++) {
+		let temp = array[i];
+		array[i] = array[array.length - 1 - i];
+		array[array.length - 1 - i] = temp;
+	}
+}
+
+const reverseArray = (array) => {
+	let result = [];
+	for (let i = array.length - 1; i >= 0; i--) {
+		result.push(array[i]);
+	}
+	return result;
+}
 ```
