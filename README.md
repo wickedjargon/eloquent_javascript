@@ -315,3 +315,180 @@ const reverseArray = (array) => {
 	return result;
 }
 ```
+
+
+## A list
+
+As generic blobs of values, objects can be used to build all sorts of data struc-
+tures. A common data structure is the list (not to be confused with arrays).
+A list is a nested set of objects, with the first object holding a reference to the
+second, the second to the third, and so on:
+
+``` js
+let list = {
+	value: 1,
+	rest: {
+		value: 2,
+		rest: {
+			value: 3,
+			rest: null
+		}
+	}
+};
+```
+
+The resulting objects form a chain, as shown in the following diagram:
+
+```
+value: 1
+rest:
+value: 2
+rest:
+value: 3
+rest: null
+```
+
+A nice thing about lists is that they can share parts of their structure. For
+example, if I create two new values {value: 0, rest: list} and {value: -1,
+rest: list} (with list referring to the binding defined earlier), they are both
+independent lists, but they share the structure that makes up their last three
+elements. The original list is also still a valid three-element list.
+
+Write a function arrayToList that builds up a list structure like the one
+shown when given [1, 2, 3] as argument. Also write a listToArray function
+that produces an array from a list. Add the helper functions prepend, which
+takes an element and a list and creates a new list that adds the element to the
+front of the input list, and nth, which takes a list and a number and returns
+the element at the given position in the list (with zero referring to the first
+element) or undefined when there is no such element.
+
+If you haven’t already, also write a recursive version of nth.
+
+``` js
+const arrayToList = (array) => {
+	let list = null;
+	for (let i = array.length - 1; i >= 0; i--) {
+		list = { value: array[i], rest: list };
+	}
+	return list;
+}
+
+const listToArray = (list) => {
+	array = [];
+	for (let node = list; node; node = node.rest) {
+		array.push(node.value);
+	}
+	return array;
+}
+
+const prepend = (value, list) => {
+	return { value: value, rest: list }
+}
+
+const nth = (n, list) => {
+	let i = 0;
+	for (let node = list; node; node = node.rest) {
+		if (i === n) {
+			return node.value;
+		}
+		i = i + 1;
+	}
+	return undefined;
+}
+
+const nthRecursive = (n, list) => {
+	if (n === 0) {
+		return list.value;
+	} else {
+		return nthRecursive(n - 1, list.rest)
+	}
+}
+```
+
+## Deep comparison
+The == operator compares objects by identity, but sometimes you’d prefer to
+compare the values of their actual properties.
+
+Write a function deepEqual that takes two values and returns true only
+if they are the same value or are objects with the same properties, where
+the values of the properties are equal when compared with a recursive call to
+deepEqual.
+
+To find out whether values should be compared directly (using the === op-
+erator for that) or have their properties compared, you can use the typeof
+operator. If it produces "object" for both values, you should do a deep com-
+parison. But you have to take one silly exception into account: because of a
+historical accident, typeof null also produces "object".
+The Object.keys function will be useful when you need to go over the prop-
+erties of objects to compare them
+
+```js
+function deepEqual(a, b) {
+  if (a === b) return true;
+
+  if (a == null || typeof a != "object" ||
+      b == null || typeof b != "object") {
+	  return false;
+  }
+
+	let keysA = Object.keys(a)
+	let keysB = Object.keys(b);
+
+	if (keysA.length != keysB.length) {
+		return false;
+	}
+
+  for (let key of keysA) {
+      if (!keysB.includes(key) || !deepEqual(a[key], b[key])) {
+		  return false;
+	  }
+  }
+
+  return true;
+}
+
+let obj = {here: {is: "an"}, object: 2};
+console.log(deepEqual(obj, obj));
+// → true
+// console.log(deepEqual(obj, {here: 1, object: 2}));
+// // → false
+// console.log(deepEqual(obj, {here: {is: "an"}, object: 2}));
+// // → true
+
+
+(add-to-list 'exec-path "./node_modules/.bin")
+```
+
+# Chapter 5
+
+## Flattening
+Use the reduce method in combination with the concat method to “flatten”
+an array of arrays into a single array that has all the elements of the original
+arrays.
+
+``` js
+const flatten = (arr) => {
+  return arr.reduce((accumulator, currentArr) => {
+	return accumulator.concat(currentArr);
+  }, [])
+}
+```
+
+## Your own loop
+Write a higher-order function loop that provides something like a for loop
+statement. It should take a value, a test function, an update function, and
+a body function. Each iteration, it should first run the test function on the
+current loop value and stop if that returns false. It should then call the body
+function, giving it the current value, and finally call the update function to
+create a new value and start over from the beginning.
+When defining the function, you can use a regular loop to do the actual
+looping.
+
+``` js
+function loop(initialValue, testFn, updateFn, bodyFn) {
+  for (let value = initialValue; testFn(value); value = updateFn(value)) {
+    bodyFn(value);
+  }
+}
+```
+
